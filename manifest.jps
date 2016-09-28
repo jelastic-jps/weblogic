@@ -1,0 +1,69 @@
+{
+  "jpsType": "install",
+  "application": {
+    "name": "Weblogic Cluster",
+    "homepage": "http://jelastic.com/",
+    "description": "Autoscalable and Highly Available Weblogic Cluster",
+    "env": {
+      "topology": {
+        "nodes": [
+          {
+            "nodeType": "docker",
+            "cloudlets": 16,
+            "nodeGroup": "admin",
+            "displayName": "AdminServer",
+            "docker": {
+              "registry": {
+                "user": "$PRIVATE_HUB_USER",
+                "password": "$PRIVATE_HUB_PASSWORD"
+              },
+              "image": "rsjelastic/weblogic:latest",
+              "env": {
+                "WLSADMIN_ADMIN_LOGIN": "weblogic",
+                "WLSADMIN_ADMIN_PASSWORD": "welcome1",
+                "PORT": "80",
+                "SERVER_ROLE": "admin"
+              },
+              "volumes": [
+                "/u01/oracle/weblogic/user_projects/domains/base_domain"
+              ]
+            }
+          },
+          {
+            "nodeType": "docker",
+            "cloudlets": 16,
+            "count": 1,
+            "nodeGroup": "cp",
+            "displayName": "ManagedServer",
+            "docker": {
+              "registry": {
+                "user": "$PRIVATE_HUB_USER",
+                "password": "$PRIVATE_HUB_PASSWORD"
+              },
+              "image": "rsjelastic/weblogic:latest",
+              "env": {
+                "WLSADMIN_ADMIN_LOGIN": "$ADMIN_LOGIN",
+                "WLSADMIN_ADMIN_PASSWORD": "$ADMIN_PASSWORD",
+                "PORT": "80",
+                "SERVER_ROLE": "managed"
+              },
+              "volumes": [
+                "/u01/oracle/weblogic/user_projects/domains/base_domain"
+              ],
+              "links": "admin:wlsadmin"
+            }
+          }
+        ]
+      },
+      "onBeforeRemoveNode[nodeGroup:cp]": {
+        "executeShellCommands": {
+          "nodeId": "${event.params.nodeid}",
+          "commands": [
+            "wlst.sh -skipWLSModuleScanning deleteManagedServer.py &>> /var/log/run.log",
+            "test -d /log && cp /var/log/run.log /log/$(hostname)-run.log || echo"
+          ]
+        }
+      }
+    }
+  }
+}
