@@ -1,2 +1,2 @@
-# weblogic
-Autoscalable and Highly Available Weblogic Cluster
+# WebLogic Cluster
+Autoscalable and Highly Available Oracle WebLogic Cluster
