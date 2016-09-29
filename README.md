@@ -20,7 +20,7 @@ With containers we can get rid of Node Manager role, as it was designed as a VM 
 
 After migration to containers such instances can be added / removed  automatically as well as can be directly attached to Administration Server using container orchestration platform and a set of WSLT scripts.
 
-<img src='images/weblogic-in-containers.png' width='600'/>
+<img src='images/weblogic-in-containers.png' width='550'/>
 
 ### Migration services from VMs to Containers
 
